@@ -80,8 +80,10 @@ public class WalleteServiceImplementation implements WalletService {
 
     @Override
     public Wallet payOrderPayment(Order order, User user) throws WalletException {
-        Wallet wallet = getUserWallet(user);
+        System.out.println("payyyyyyyyyyyy");
 
+        Wallet wallet = getUserWallet(user);
+        System.out.println("Wallet Item: " + wallet);
         WalletTransaction walletTransaction=new WalletTransaction();
         walletTransaction.setWallet(wallet);
         walletTransaction.setPurpose(order.getOrderType()+ " " + order.getOrderItem().getCoin().getId() );
@@ -110,7 +112,7 @@ public class WalleteServiceImplementation implements WalletService {
         }
 
 
-//        System.out.println("wallet balance "+wallet+"-------"+order.getPrice());
+        System.out.println("wallet balance "+wallet+"-------"+order.getPrice());
         walletTransactionRepository.save(walletTransaction);
         walletRepository.save(wallet);
         return wallet;

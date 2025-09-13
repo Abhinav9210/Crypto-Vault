@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AssetServiceImplementation implements  AssetService {
+public class AssetServiceImplementation implements AssetService {
     private final AssetsRepository assetRepository;
 
     @Autowired
@@ -23,12 +23,12 @@ public class AssetServiceImplementation implements  AssetService {
     @Override
     public Asset createAsset(User user, Coin coin, double quantity) {
         Asset asset = new Asset();
-
+        System.out.println("26**************");
         asset.setQuantity(quantity);
         asset.setBuyPrice(coin.getCurrentPrice());
         asset.setCoin(coin);
         asset.setUser(user);
-
+        System.out.println("31**************");
         return assetRepository.save(asset);
     }
 
@@ -44,7 +44,7 @@ public class AssetServiceImplementation implements  AssetService {
 
     @Override
     public Asset getAssetByUserAndId(Long userId, Long assetId) {
-        return assetRepository.findByIdAndUserId(assetId,userId);
+        return assetRepository.findByIdAndUserId(assetId, userId);
     }
 
     @Override
@@ -53,22 +53,21 @@ public class AssetServiceImplementation implements  AssetService {
     }
 
 
-
     @Override
     public Asset updateAsset(Long assetId, double quantity) throws Exception {
 
-        Asset oldAsset=getAssetById(assetId);
-        if(oldAsset==null){
+        Asset oldAsset = getAssetById(assetId);
+        if (oldAsset == null) {
             throw new Exception("Asset not found...");
         }
-        oldAsset.setQuantity(quantity+ oldAsset.getQuantity());
+        oldAsset.setQuantity(quantity + oldAsset.getQuantity());
 
         return assetRepository.save(oldAsset);
     }
 
     @Override
     public Asset findAssetByUserIdAndCoinId(Long userId, String coinId) throws Exception {
-        return assetRepository.findByUserIdAndCoinId(userId,coinId);
+        return assetRepository.findByUserIdAndCoinId(userId, coinId);
     }
 
 

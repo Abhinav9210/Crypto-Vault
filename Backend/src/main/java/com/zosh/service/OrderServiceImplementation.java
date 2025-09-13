@@ -5,9 +5,9 @@ import com.zosh.domain.OrderType;
 import com.zosh.model.*;
 import com.zosh.repository.*;
 
-import com.zosh.repository.AssetsRepository;
+
 import com.zosh.repository.OrderRepository;
-import com.zosh.request.CreateOrderRequest;
+import com.zosh.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +19,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImplementation implements OrderService {
-    private final OrderRepository orderRepository;
-    private final AssetService assetService;
+@Autowired
+    private   OrderRepository orderRepository;
+@Autowired
+    private  AssetService assetService;
 
     @Autowired
     private WalletService walletService;
@@ -29,15 +31,19 @@ public class OrderServiceImplementation implements OrderService {
     private OrderItemRepository orderItemRepository;
 
     @Autowired
-    public OrderServiceImplementation(OrderRepository orderRepository, AssetService assetService) {
-        this.orderRepository = orderRepository;
-        this.assetService = assetService;
-    }
+    private UserRepository userRepository;
+
+//    @Autowired
+//    public OrderServiceImplementation(OrderRepository orderRepository, AssetService assetService) {
+//        this.orderRepository = orderRepository;
+//        this.assetService = assetService;
+//    }
 
     @Override
     @Transactional
     public Order createOrder(User user, OrderItem orderItem, OrderType orderType) {
 
+        System.out.println("39182381209381230912-03912-392-=32");
 
         double price = orderItem.getCoin().getCurrentPrice()*orderItem.getQuantity();
 
@@ -49,12 +55,16 @@ public class OrderServiceImplementation implements OrderService {
         order.setTimestamp(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
 
+        System.out.println("ullulumasdasksfdk "+ order);
 
         return orderRepository.save(order);
+//        return order;
     }
 
     @Override
     public Order getOrderById(Long orderId) {
+        System.out.println("wlkmfs,f wlfmewiorj329j32porm2;l ew   l");
+
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
     }
@@ -100,7 +110,7 @@ public class OrderServiceImplementation implements OrderService {
 
         orderItem.setCoin(coin);
         orderItem.setQuantity(quantity);
-        orderItem.setBuyPrice(coin.getCurrentPrice());
+//        orderItem.setBuyPrice(coin.getCurrentPrice());
         orderItem.setBuyPrice(buyPrice);
         orderItem.setSellPrice(sellPrice);
 
@@ -110,39 +120,52 @@ public class OrderServiceImplementation implements OrderService {
 
     @Transactional
     public Order buyAsset(Coin coin,double quantity, User user) throws Exception {
-        if(quantity<0)throw new Exception("quantity should be > 0");
+        if(quantity<=0)throw new Exception("quantity should be > 0");
         double buyPrice=coin.getCurrentPrice();
 
         OrderItem orderItem = createOrderItem(coin,quantity,buyPrice,0);
 
+        orderItem=orderItemRepository.save(orderItem);
+        System.out.println("Order Item: " + orderItem);
+        System.out.println("User 82131289: " + user);
 
         Order order = createOrder(user, orderItem, OrderType.BUY);
+
+        System.out.println("2809383205832-5093235 " );
+System.out.println("order item88888888888 " +orderItem);
+        System.out.println("order 777777777777 " +order);
+
         orderItem.setOrder(order);
+
+        System.out.println("Order ** " + order);
 
 
         walletService.payOrderPayment(order, user);
 
         order.setStatus(OrderStatus.SUCCESS);
         order.setOrderType(OrderType.BUY);
+        System.out.println("147**************");
 
         Order savedOrder = orderRepository.save(order);
-
+        System.out.println("Order : " + savedOrder);
         Asset oldAsset = assetService.findAssetByUserIdAndCoinId(
                 order.getUser().getId(),
                 order.getOrderItem().getCoin().getId()
         );
-
+        System.out.println("155**************");
         if (oldAsset == null) {
+            System.out.println("157**************");
             assetService.createAsset(
                     user,orderItem.getCoin(),
                     orderItem.getQuantity()
             );
         } else {
+            System.out.println("163**************");
             assetService.updateAsset(
                     oldAsset.getId(),quantity
             );
         }
-
+        System.out.println("168**************");
         return savedOrder;
     }
 

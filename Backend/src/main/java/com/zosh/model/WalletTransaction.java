@@ -15,7 +15,11 @@ public class WalletTransaction {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "wallet_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_wallet_transaction_wallet"))
     private Wallet wallet;
+
+
 
     private WalletTransactionType type;
 

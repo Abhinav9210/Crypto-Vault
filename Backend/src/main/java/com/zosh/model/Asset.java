@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "assets")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,12 +20,15 @@ public class Asset {
     private double buyPrice;
 
     @ManyToOne
-    private Coin coin;
-
-   
+    @JoinColumn(name = "user_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_asset_user"))
+    private User user;
 
     @ManyToOne
-    private User user;
+    @JoinColumn(name = "coin_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_asset_coin"))
+    private Coin coin;
+
 
 
 }

@@ -8,6 +8,33 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+//@Data
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@Entity
+//public class OrderItem {
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+//    private Long id;
+//
+//    private double quantity;
+//
+//    @ManyToOne
+//    private Coin coin;
+//
+//    private double buyPrice;
+//
+//    private double sellPrice;
+//
+//    @JsonIgnore
+//    @OneToOne
+//    private Order order;
+//
+//}
+
+import lombok.ToString;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,6 +56,6 @@ public class OrderItem {
 
     @JsonIgnore
     @OneToOne
+    @ToString.Exclude  // prevent recursion
     private Order order;
-
 }

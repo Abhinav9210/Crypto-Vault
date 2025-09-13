@@ -11,6 +11,42 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+//@Data
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@Entity
+//@Table(name = "orders")
+//public class Order {
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+//    private User user;
+//
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private OrderType orderType;
+//
+//    @Column(nullable = false)
+//    private BigDecimal price;
+//
+//    @Column(nullable = false)
+//    private LocalDateTime timestamp;
+//
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private OrderStatus status = OrderStatus.PENDING;
+//
+//
+//    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+//    private OrderItem orderItem;
+//
+//
+//}
+import lombok.ToString;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,7 +57,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
@@ -38,9 +75,7 @@ public class Order {
     @Column(nullable = false)
     private OrderStatus status = OrderStatus.PENDING;
 
-
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    @ToString.Exclude  // prevent recursion
     private OrderItem orderItem;
-
-
 }

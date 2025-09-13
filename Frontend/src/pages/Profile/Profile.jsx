@@ -42,11 +42,11 @@ const Profile = () => {
                 </div>
                 <div className="flex">
                   <p className="w-[9rem]">Full Name : </p>
-                  <p className="text-gray-500">{"code with Jatin"} </p>
+                  <p className="text-gray-500">{auth.user?.fullName} </p>
                 </div>
                 <div className="flex">
                   <p className="w-[9rem]">Date Of Birth : </p>
-                  <p className="text-gray-500">{"25/09/2000"} </p>
+                  <p className="text-gray-500">{"14/08/2003"} </p>
                 </div>
                 <div className="flex">
                   <p className="w-[9rem]">Nationality : </p>
@@ -56,15 +56,15 @@ const Profile = () => {
               <div className="space-y-7">
                 <div className="flex">
                   <p className="w-[9rem]">Address : </p>
-                  <p className="text-gray-500">{"code with jatin"} </p>
+                  <p className="text-gray-500">{"code with abhinav"} </p>
                 </div>
                 <div className="flex">
                   <p className="w-[9rem]">City : </p>
-                  <p className="text-gray-500">{"mumbai"} </p>
+                  <p className="text-gray-500">{"jalandhar"} </p>
                 </div>
                 <div className="flex">
                   <p className="w-[9rem]">Postcode : </p>
-                  <p className="text-gray-500">{345020} </p>
+                  <p className="text-gray-500">{144011} </p>
                 </div>
                 <div className="flex">
                   <p className="w-[9rem]">Country : </p>
