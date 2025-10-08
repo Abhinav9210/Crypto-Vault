@@ -1,12 +1,12 @@
-package com.zosh.controller;
+package com.Abhinav.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.zosh.model.CoinDTO;
-import com.zosh.request.PromptBody;
-import com.zosh.response.ApiResponse;
-import com.zosh.response.FunctionResponse;
-import com.zosh.service.ChatBotService;
-import com.zosh.service.ChatBotServiceImpl;
+import com.Abhinav.model.CoinDTO;
+import com.Abhinav.request.PromptBody;
+import com.Abhinav.response.ApiResponse;
+import com.Abhinav.response.FunctionResponse;
+import com.Abhinav.service.ChatBotService;
+import com.Abhinav.service.ChatBotServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

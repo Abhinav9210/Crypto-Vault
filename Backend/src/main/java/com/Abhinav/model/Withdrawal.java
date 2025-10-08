@@ -17,8 +17,10 @@ public class Withdrawal {
 
     private Long amount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
+
 
     private LocalDateTime date;
 }
