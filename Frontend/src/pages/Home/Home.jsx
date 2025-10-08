@@ -1,210 +1,150 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import { AssetTable } from "./AssetTable";
 import { Button } from "@/components/ui/button";
 import StockChart from "../StockDetails/StockChart";
-import {
-  ChatBubbleIcon,
-  ChevronLeftIcon,
-  Cross1Icon,
-  DotIcon,
-} from "@radix-ui/react-icons";
+import { Cross1Icon, DotIcon, ChevronLeftIcon } from "@radix-ui/react-icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCoinDetails,
   fetchCoinList,
-  fetchTreadingCoinList,
   getTop50CoinList,
+  fetchTreadingCoinList,
 } from "@/Redux/Coin/Action";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-} from "@/components/ui/pagination";
 import { MessageCircle } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { sendMessage } from "@/Redux/Chat/Action";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import SpinnerBackdrop from "@/components/custome/SpinnerBackdrop";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 
 const Home = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("all");
   const { coin, chatBot, auth } = useSelector((store) => store);
-  const [isBotRelease, setIsBotRelease] = useState(false); //
+  const [isBotRelease, setIsBotRelease] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const chatContainerRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchCoinList(page));
   }, [page]);
 
   useEffect(() => {
-    dispatch(fetchCoinDetails({
-      coinId: "bitcoin",
-      jwt: auth.jwt || localStorage.getItem("jwt"),
-    }))
-    
+    dispatch(
+      fetchCoinDetails({
+        coinId: "bitcoin",
+        jwt: auth.jwt || localStorage.getItem("jwt"),
+      })
+    );
   }, []);
 
   useEffect(() => {
-    if (category == "top50") {
-      dispatch(getTop50CoinList());
-    }else if( category == "trading"){
-      dispatch(fetchTreadingCoinList())
-    }
+    if (category === "top50") dispatch(getTop50CoinList());
+    else if (category === "trading") dispatch(fetchTreadingCoinList());
   }, [category]);
 
-  const handlePageChange = (page) => {
-    setPage(page);
-  };
+  useEffect(() => {
+    if (chatContainerRef.current)
+      chatContainerRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [chatBot.messages]);
 
+  const handlePageChange = (page) => setPage(page);
   const handleBotRelease = () => setIsBotRelease(!isBotRelease);
-
-  const [inputValue, setInputValue] = useState("");
-
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      console.log("Enter key pressed:", inputValue);
+  const handleChange = (e) => setInputValue(e.target.value);
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && inputValue.trim() !== "") {
       dispatch(
-        sendMessage({
-          prompt: inputValue,
-          jwt: auth.jwt || localStorage.getItem("jwt"),
-        })
+        sendMessage({ prompt: inputValue, jwt: auth.jwt || localStorage.getItem("jwt") })
       );
       setInputValue("");
     }
   };
 
-  const handleChange = (event) => {
-    setInputValue(event.target.value);
-  };
-
-  const chatContainerRef = useRef(null);
-
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [chatBot.messages]);
-
-  
-
-  if (coin.loading) {
-    return <SpinnerBackdrop />;
-  }
+  if (coin.loading) return <SpinnerBackdrop />;
 
   return (
-    <div className="relative">
-      <div className="lg:flex ">
-        <div className="lg:w-[50%] border-r">
-          <div className="p-3 flex items-center gap-4 ">
+    <div className="relative min-h-screen bg-[#0a0a0a] text-white">
+      <div className="lg:flex">
+        {/* Left Panel */}
+        <div className="lg:w-[50%] border-r border-[#1f1f1f] p-3">
+          <div className="flex gap-3 mb-3">
             <Button
-              variant={category == "all" ? "default" : "outline"}
+              variant={category === "all" ? "default" : "outline"}
               onClick={() => setCategory("all")}
-              className="rounded-full"
+              className="rounded-full bg-[#1f1f1f] hover:bg-[#2a2a2a] shadow-sm text-white"
             >
               All
             </Button>
             <Button
-              variant={category == "top50" ? "default" : "outline"}
+              variant={category === "top50" ? "default" : "outline"}
               onClick={() => setCategory("top50")}
-              className="rounded-full"
+              className="rounded-full bg-[#1f1f1f] hover:bg-[#2a2a2a] shadow-sm text-white"
             >
               Top 50
             </Button>
-            
-           
           </div>
+
           <AssetTable
             category={category}
-            coins={category == "all" ? coin.coinList : coin.top50}
+            coins={category === "all" ? coin.coinList : coin.top50}
           />
-          {category == "all" && (
-            <Pagination className="border-t py-3">
+
+          {category === "all" && (
+            <Pagination className="flex justify-center mt-2">
               <PaginationContent>
                 <PaginationItem>
                   <Button
                     variant="ghost"
-                    disabled={page == 1}
+                    disabled={page === 1}
                     onClick={() => handlePageChange(page - 1)}
                   >
-                    <ChevronLeftIcon className="h-4 w-4 mr-1" />
-                    Previous
+                    <ChevronLeftIcon className="mr-1 h-4 w-4" />
+                    Prev
                   </Button>
                 </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    onClick={() => handlePageChange(1)}
-                    isActive={page == 1}
-                  >
-                    1
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    onClick={() => handlePageChange(2)}
-                    isActive={page == 2}
-                  >
-                    2
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    onClick={() => handlePageChange(3)}
-                    isActive={page == 3}
-                  >
-                    3
-                  </PaginationLink>
-                </PaginationItem>
+                {[1, 2, 3].map((p) => (
+                  <PaginationItem key={p}>
+                    <PaginationLink onClick={() => handlePageChange(p)} isActive={page === p}>
+                      {p}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
                 {page > 3 && (
                   <PaginationItem>
-                    <PaginationLink
-                      onClick={() => handlePageChange(3)}
-                      isActive
-                    >
-                      {page}
-                    </PaginationLink>
+                    <PaginationLink isActive>{page}</PaginationLink>
                   </PaginationItem>
                 )}
                 <PaginationItem>
                   <PaginationEllipsis />
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationNext
-                    className="cursor-pointer"
-                    onClick={() => handlePageChange(page + 1)}
-                  />
+                  <PaginationNext onClick={() => handlePageChange(page + 1)} />
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
           )}
         </div>
 
+        {/* Right Panel */}
         <div className="hidden lg:block lg:w-[50%] p-5">
           <StockChart coinId={"bitcoin"} />
-          <div className="flex gap-5 items-center">
+          <div className="flex gap-5 items-center mt-4">
+            <Avatar>
+              <AvatarImage src={coin.coinDetails?.image?.large} />
+            </Avatar>
             <div>
-              <Avatar>
-                <AvatarImage src={coin.coinDetails?.image?.large} />
-              </Avatar>
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-400">
                 <p>{coin.coinDetails?.symbol?.toUpperCase()}</p>
-                <DotIcon className="text-gray-400" />
-                <p className="text-gray-400">{coin.coinDetails?.name}</p>
+                <DotIcon className="text-gray-500" />
+                <p>{coin.coinDetails?.name}</p>
               </div>
               <div className="flex items-end gap-2">
                 <p className="text-xl font-bold">
@@ -214,105 +154,86 @@ const Home = () => {
                   className={`${
                     coin.coinDetails?.market_data.market_cap_change_24h < 0
                       ? "text-red-600"
-                      : "text-green-600"
+                      : "text-green-400"
                   }`}
                 >
-                  <span className="">
-                    {coin.coinDetails?.market_data.market_cap_change_24h}
-                  </span>
-                  <span>
-                    (
-                    {
-                      coin.coinDetails?.market_data
-                        .market_cap_change_percentage_24h
-                    }
-                    %)
-                  </span>
+                  {coin.coinDetails?.market_data.market_cap_change_24h} (
+                  {coin.coinDetails?.market_data.market_cap_change_percentage_24h}%)
                 </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <section className="absolute bottom-5 right-5 z-40 flex flex-col justify-end items-end gap-2">
-        {isBotRelease && (
-          <div className="rounded-md w-[20rem]  md:w-[25rem] lg:w-[25rem] h-[70vh] bg-slate-900">
-            <div className="flex justify-between items-center border-b px-6 h-[12%]">
-              <p>Chat Bot</p>
-              <Button onClick={handleBotRelease} size="icon" variant="ghost">
-                <Cross1Icon />
-              </Button>
-            </div>
 
-            <div className="h-[76%]  flex flex-col overflow-y-auto  gap-5 px-5 py-2 scroll-container">
+  {/* Floating Chat Bot */}
+<div className="fixed bottom-10 right-10 z-50 flex flex-col items-end gap-2">
+  {isBotRelease && (
+    <div className="w-[22rem] h-[60vh] max-w-full bg-[#111111] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="flex justify-between items-center px-4 py-2 border-b border-gray-700">
+        <p className="font-semibold text-white">Chat Bot</p>
+        <Button size="icon" variant="ghost" onClick={handleBotRelease}>
+          <Cross1Icon className="text-white" />
+        </Button>
+      </div>
+
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-2 space-y-3 scrollbar-thin scrollbar-thumb-blue-600 scrollbar-track-gray-900">
+        {/* Welcome Message */}
+        <div className="self-start bg-[#1a1a1a] px-3 py-2 rounded-md shadow-inner border border-gray-700">
+          <p className="text-white">{`Hi, ${auth.user?.fullName}`}</p>
+          <p className="text-gray-400 text-sm">Ask any crypto-related question!</p>
+        </div>
+
+        {/* Chat Messages */}
+        {chatBot.messages.map((item, idx) => (
+          <div
+            ref={chatContainerRef}
+            key={idx}
+            className={`flex w-full ${
+              item.role === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
             <div
-                 
-                  
-                  className={`${ "self-start"
-                  } pb-5 w-auto`}
-                >
-                  <div className="justify-end self-end px-5 py-2 rounded-md bg-slate-800 w-auto">
-                      {`hi, ${auth.user?.fullName}`}
-                      <p>you can ask crypto related any question</p>
-                      <p>like, price, market cap extra...</p>
-                    </div>
-                  
-                </div>
-              {chatBot.messages.map((item, index) => (
-                <div
-                  ref={chatContainerRef}
-                  key={index}
-                  className={`${
-                    item.role == "user" ? "self-end" : "self-start"
-                  } pb-5 w-auto`}
-                >
-                 
-                  {item.role == "user" ? (
-                    <div className="justify-end self-end px-5 py-2 rounded-full bg-slate-800 w-auto">
-                      {item.prompt}
-                    </div>
-                  ) : (
-                    <div className="w-full">
-                      <div className="bg-slate-700 flex gap-2 py-4 px-4 rounded-md min-w-[15rem] w-full">
-                        <p className="">{item.ans}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-              {chatBot.loading && <p>fetchin data...</p>}
-            </div>
-
-            <div className="h-[12%] border-t">
-              <Input
-                className="w-full h-full border-none outline-none"
-                placeholder="write prompt"
-                onChange={handleChange}
-                value={inputValue}
-                onKeyPress={handleKeyPress}
-              />
+              className={`px-3 py-2 rounded-md max-w-[18rem] break-words ${
+                item.role === "user"
+                  ? "bg-gradient-to-r from-gray-800 to-gray-900 text-right text-white shadow-md"
+                  : "bg-gradient-to-r from-gray-900 to-gray-800 text-left text-white shadow-sm"
+              }`}
+            >
+              <p>{item.role === "user" ? item.prompt : item.ans}</p>
             </div>
           </div>
+        ))}
+        {chatBot.loading && (
+          <p className="text-gray-400 text-sm">Fetching data...</p>
         )}
-        <div
-          onClick={handleBotRelease}
-          className="relative w-[10rem] cursor-pointer group"
-        >
-          <Button  className="w-full h-[3rem] gap-2 items-center">
-            
-            <MessageCircle
-            fill=""
-            className="fill-[#1e293b] -rotate-[90deg] stroke-none group-hover:fill-[#1a1a1a] "
-            size={30}
-          />
-          
-          <span className=" text-2xl">
-            Chat Bot
-          </span>
-          </Button>
-          
-        </div>
-      </section>
+      </div>
+
+      {/* Input */}
+      <div className="px-3 py-2 border-t border-gray-700">
+        <Input
+          placeholder="Type a message..."
+          className="bg-[#1a1a1a] border-none text-white focus:ring-0 placeholder-gray-500 w-full"
+          value={inputValue}
+          onChange={handleChange}
+          onKeyPress={handleKeyPress}
+        />
+      </div>
+    </div>
+  )}
+
+  {/* Floating Button */}
+  <Button
+    className="bg-[#1f1f1f] hover:bg-[#2a2a2a] text-white rounded-full px-4 py-2 flex items-center gap-2 shadow-lg hover:shadow-blue-500/50 transition-all duration-200"
+    onClick={handleBotRelease}
+  >
+    <MessageCircle className="text-blue-400" size={24} />
+    Chat Bot
+  </Button>
+</div>
+
     </div>
   );
 };

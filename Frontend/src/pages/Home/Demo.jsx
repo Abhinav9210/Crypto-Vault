@@ -1,27 +1,66 @@
-import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const StockChart = () => {
-  // Sample data
-  const data = [
-    { date: '2024-01-30', close: 187.87 },
-    { date: '2024-01-26', close: 187.42 },
-    { date: '2024-01-19', close: 171.48 },
-    { date: '2024-01-12', close: 165.80 },
-    { date: '2024-01-05', close: 159.16 },
-    { date: '2023-12-29', close: 163.55 }
-  ];
+import React, { useEffect, useState } from "react";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
+import fetchData from "@/utils/fetchData";
+
+const StockChart = ({ coinId }) => {
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    const fetchChart = async () => {
+      const data = await fetchData("TIME_SERIES_DAILY", coinId.toUpperCase());
+      if (data && data["Time Series (Daily)"]) {
+        const times = Object.entries(data["Time Series (Daily)"]);
+        const formatted = times
+          .map(([date, values]) => ({
+            date,
+            close: parseFloat(values["4. close"]),
+          }))
+          .reverse();
+        setChartData(formatted);
+      }
+    };
+    fetchChart();
+  }, [coinId]);
+
+  if (!chartData.length)
+    return (
+      <div className="h-96 flex justify-center items-center text-gray-400">
+        Loading chart...
+      </div>
+    );
 
   return (
-    <div className="stock-chart">
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="close" stroke="#8884d8" />
+    <div className="w-full h-96 bg-[#111111] rounded-lg p-3 shadow-lg">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#222222" />
+          <XAxis dataKey="date" axisLine={false} tick={{ fill: "#94a3b8" }} />
+          <YAxis axisLine={false} tick={{ fill: "#94a3b8" }} />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "#111111",
+              border: "1px solid #333",
+              color: "#fff",
+            }}
+            labelStyle={{ color: "#cbd5e1" }}
+            itemStyle={{ color: "#00bfff" }}
+          />
+          <Line
+            type="monotone"
+            dataKey="close"
+            stroke="#00bfff"
+            strokeWidth={2}
+            dot={false}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
