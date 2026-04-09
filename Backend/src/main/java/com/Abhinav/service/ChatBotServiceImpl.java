@@ -231,7 +231,7 @@ public FunctionResponse getFunctionResponse(String prompt) {
 //        return fallback;
         ReadContext ctx = JsonPath.parse(response.getBody());
         String text = ctx.read("$.candidates[0].content.parts[0].text");
-        System.out.println("after 2y384u****************");
+
 //        ApiResponse ans = new ApiResponse();
         fallback.setCurrencyData(text);
 
@@ -257,9 +257,9 @@ public FunctionResponse getFunctionResponse(String prompt) {
 
     @Override
     public ApiResponse getCoinDetails(String prompt) throws Exception {
-        System.out.println("before****************");
+
         FunctionResponse res = getFunctionResponse(prompt);
-        System.out.println("after****************");
+
         // ✅ Agar Gemini functionCall nahi bhejta toh sidha simpleChat ka response
         if ("simpleChat".equals(res.getFunctionName())) {
             ApiResponse ans = new ApiResponse();
@@ -351,13 +351,13 @@ public FunctionResponse getFunctionResponse(String prompt) {
         HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.postForEntity(GEMINI_API_URL, request, String.class);
-        System.out.println("before34y47****************");
+
         System.out.println("Response: " + response.getBody());
 
         // Parse Gemini response
         ReadContext ctx = JsonPath.parse(response.getBody());
         String text = ctx.read("$.candidates[0].content.parts[0].text");
-        System.out.println("after 2y384u****************");
+
         ApiResponse ans = new ApiResponse();
         ans.setMessage(text);
 

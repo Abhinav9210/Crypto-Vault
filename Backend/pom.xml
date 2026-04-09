@@ -42,10 +42,16 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.mysql</groupId>-->
+<!--			<artifactId>mysql-connector-j</artifactId>-->
+<!--			<version>8.0.33</version> &lt;!&ndash; use latest stable version &ndash;&gt;-->
+<!--		</dependency>-->
+		<!-- Remove MySQL -->
+		<!-- Add PostgreSQL -->
 		<dependency>
-			<groupId>com.mysql</groupId>
-			<artifactId>mysql-connector-j</artifactId>
-			<version>8.0.33</version> <!-- use latest stable version -->
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
