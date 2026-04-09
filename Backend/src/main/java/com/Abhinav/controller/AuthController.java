@@ -22,7 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+//import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -165,30 +165,30 @@ public class AuthController {
 	}
 
 
-	@GetMapping("/login/google")
-	public void redirectToGoogle(HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
-		// Redirect to the Google OAuth2 authorization URI
-		response.sendRedirect("/login/oauth2/authorization/google");
-	}
+//	@GetMapping("/login/google")
+//	public void redirectToGoogle(HttpServletRequest request, HttpServletResponse response)
+//			throws IOException {
+//		// Redirect to the Google OAuth2 authorization URI
+//		response.sendRedirect("/login/oauth2/authorization/google");
+//	}
 
 //	/login/oauth2/code/google
-@GetMapping("/login/oauth2/code/google")
-public User handleGoogleCallback(@RequestParam(required = false,name = "code") String code,
-										 @RequestParam(required = false,name = "state") String state,
-										 OAuth2AuthenticationToken authentication) {
-
-	// Extract user details from the authentication object or access token
-	String email = authentication.getPrincipal().getAttribute("email");
-	String fullName = authentication.getPrincipal().getAttribute("name");
-	// You can extract more details as needed
-
-	User user=new User();
-	user.setEmail(email);
-	user.setFullName(fullName);
-
-	return user;
-}
+//@GetMapping("/login/oauth2/code/google")
+//public User handleGoogleCallback(@RequestParam(required = false,name = "code") String code,
+//										 @RequestParam(required = false,name = "state") String state,
+//										 OAuth2AuthenticationToken authentication) {
+//
+//	// Extract user details from the authentication object or access token
+//	String email = authentication.getPrincipal().getAttribute("email");
+//	String fullName = authentication.getPrincipal().getAttribute("name");
+//	// You can extract more details as needed
+//
+//	User user=new User();
+//	user.setEmail(email);
+//	user.setFullName(fullName);
+//
+//	return user;
+//}
 
 	@PostMapping("/two-factor/otp/{otp}")
 	public ResponseEntity<AuthResponse> verifySigningOtp(
